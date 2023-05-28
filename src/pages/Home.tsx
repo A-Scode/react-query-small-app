@@ -45,7 +45,7 @@ const Home:FC<props> = (props:props) =>{
                         <Chip label = {item.private? "Private" : "Public"} variant="outlined" />
                         </ListItemButton>
                     ))
-                    : <CircularProgress />}
+                    : <CircularProgress sx={{position:"fixed" , top:"50%" , left:"50%"}} />}
                 </List>
             </Box>
 
