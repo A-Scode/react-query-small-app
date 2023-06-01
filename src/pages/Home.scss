@@ -2,5 +2,9 @@
     display: flex;
     flex: 0 0 100%;
     flex-direction: column;
-    gap: 20px;
+    gap: 50px;
+
+    .repo_details{
+        align-self: center;
+    }
 }

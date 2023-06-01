@@ -1,17 +1,18 @@
-import { FC, useEffect } from "react";
+import React, { FC, useEffect } from "react";
 import Header from "../components/Header";
-import { Box, Chip, CircularProgress, List, ListItem, ListItemButton, Stack } from "@mui/material";
+import { Box, Chip, CircularProgress, List, ListItem, ListItemButton, Stack, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "../../constants";
 import StarIcon from '@mui/icons-material/Star';
 import { NavigateFunction, useNavigate } from "react-router-dom";
 import "./Home.scss"
 import * as action from "../../redux-store/action" ;
-import { bindActionCreators } from "@reduxjs/toolkit";
+import { Dispatch, Func1, bindActionCreators } from "@reduxjs/toolkit";
 import { connect, useSelector } from "react-redux";
 
  type props  = {
-    
+    storeRepo : Func1<any , any>,
+    repos : Array<any>
  };
 
 const Home:FC<props> = (props:props) =>{
@@ -20,7 +21,7 @@ const Home:FC<props> = (props:props) =>{
 
     const reposQuery = useQuery( {
         queryKey : ['repos'],
-        queryFn : ()=>api.get("/users/a-scode/repos?sort=created" ).then(
+        queryFn : async ()=> await api.get("/users/a-scode/repos?sort=created" ).then(
             (res:any)=>{
                 props.storeRepo(res.data);
                 return res.data;
@@ -36,15 +37,18 @@ const Home:FC<props> = (props:props) =>{
 
             <Box>
                 <List style={{maxWidth:400}}>
-                    {!reposQuery.isLoading?props.repos.map((item:any , index:Number)=>(
-                        <ListItemButton key = {index} onClick={()=>window.open(item.html_url , "blank")}>
-                        <ListItem  >
-                            <StarIcon />
-                            &nbsp; {item.name}
-                        </ListItem>
+                    {!reposQuery.isLoading?
+                    props.repos.map((item:any , index:Number)=>(
+                        <ListItemButton key={index} onClick={()=>navigate(`./repo/${item.name}`)}>
+                            <ListItem  >
+                                <StarIcon />
+                                &nbsp; {item.name}
+                            </ListItem>
                         <Chip label = {item.private? "Private" : "Public"} variant="outlined" />
                         </ListItemButton>
                     ))
+                    :reposQuery.isError?
+                    <Typography variant="h4">Error occured.</Typography>
                     : <CircularProgress sx={{position:"fixed" , top:"50%" , left:"50%"}} />}
                 </List>
             </Box>
@@ -53,9 +57,9 @@ const Home:FC<props> = (props:props) =>{
     )
 }
 
-const mapDispatchToProps = (dispatch : Function)=>{
+const mapDispatchToProps = (dispatch : Dispatch)=>{
     return {
-        storeRepo : bindActionCreators(action.storeRepo , dispatch)
+        storeRepo : bindActionCreators(action.storeRepo  , dispatch)
     }
 }
 

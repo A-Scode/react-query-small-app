@@ -9,6 +9,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { Provider } from 'react-redux'
 import {store , persistor} from '../redux-store/redux-store'
 import { PersistGate } from 'redux-persist/integration/react'
+import Repo from './pages/Repo'
 
 
 
@@ -29,6 +30,18 @@ const router = createBrowserRouter([
 
     )},
     path : '/'
+
+  },
+  {
+    index : true,
+    Component : ()=>{
+      return (
+      <Suspense fallback = {<CircularProgress/>} >
+        <Repo />
+      </Suspense>
+
+    )},
+    path : 'repo/:repo_name'
 
   },
 ])
